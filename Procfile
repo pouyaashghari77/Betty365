@@ -1,1 +1,1 @@
-web: gunicorn Betty.wsgi --log-file -
+web: python manage.py collectstatic --no-input; gunicorn Betty.wsgi --log-file -
