@@ -10,12 +10,19 @@ class UserAdmin(admin.UserAdmin):
     fieldsets = (
         ('Account Information', {
             'fields': (
-                'username', 'email', 'password'
+                'username',
+                'password',
+                'email',
+                'balance'
             ),
         }),
         ('Personal Information', {
             'fields': (
-                'first_name', 'last_name', 'birth_date',),
+                'first_name',
+                'last_name',
+                'birth_date',
+                'country'
+            )
 
         }),
     )

@@ -3,7 +3,7 @@ from django.urls import path
 from Betty.apps.bets.views import (
     EventsListAPI, UserBetsListAPIView,
     EventBetsAPIView, ModifyBetAPIView,
-    UserDepositsList, DepositDetail
+    UserDepositsList, DepositDetail, WithdrawalRequestAPI
 )
 
 urlpatterns = [
@@ -13,5 +13,6 @@ urlpatterns = [
 
     path("users/self/bets/", UserBetsListAPIView.as_view()),
     path("users/self/deposits/", UserDepositsList.as_view()),
+    path("users/self/withdrawals/", WithdrawalRequestAPI.as_view()),
     path("users/self/deposits/<str:serial_num>/", DepositDetail.as_view())
 ]

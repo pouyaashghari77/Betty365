@@ -43,13 +43,14 @@ class Bet(models.Model):
         (SIDE_LAY, 'Lay'),
     )
     event = models.ForeignKey('Event', models.CASCADE, verbose_name='Event')
-    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, verbose_name='User')
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE,
+                             related_name='bets', verbose_name='User')
     selection = models.CharField('Selection', max_length=64)
     side = models.CharField('Side', max_length=4)
     odds = models.FloatField('Odds')
     stake = models.FloatField('Stake')
     matched = models.BooleanField('Matched', default=False)
-    matched_with = models.ForeignKey('self', blank=True, null=True,
+    matched_with = models.ForeignKey('self', blank=True, null=True, related_name='matched_bets',
                                      on_delete=models.SET_NULL, verbose_name='Matched With')
     has_won = models.NullBooleanField('Has Won')
 
@@ -68,8 +69,9 @@ class Bet(models.Model):
 class Deposit(models.Model):
     serial_num = models.CharField('Serial Number', max_length=128, null=True, blank=True)
     code = models.CharField('Code', max_length=128, null=True, blank=True)
-    value = models.CharField('Value', max_length=128, null=True, blank=True)
+    amount = models.FloatField('Amount', default=0, null=True, blank=True)
     user = models.ForeignKey('accounts.User', on_delete=models.CASCADE,
+                             related_name='deposits',
                              null=True, blank=True,
                              verbose_name='User')
 
@@ -79,3 +81,28 @@ class Deposit(models.Model):
     class Meta:
         verbose_name = 'Deposit'
         verbose_name_plural = 'Deposits'
+
+
+class WithdrawalRequest(models.Model):
+    STATUS_PENDING = 'Pending'
+    STATUS_APPROVED = 'Approved'
+    STATUS_CANCELLED = 'Cancelled'
+    STATUS_REJECTED = 'Rejected'
+    STATUS_CHOICES = (
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_APPROVED, 'Approved'),
+        (STATUS_CANCELLED, 'Cancelled'),
+        (STATUS_REJECTED, 'Rejected'),
+    )
+    amount = models.FloatField('Amount', default=0, null=True, blank=True)
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE,
+                             null=True, blank=True, related_name='withdrawal_requests',
+                             verbose_name='User')
+    status = models.CharField('Status', choices=STATUS_CHOICES, default=STATUS_PENDING,
+                              max_length=32, blank=True, null=True)
+    created = models.DateTimeField('Created at', auto_now_add=True)
+    updated = models.DateTimeField('Updated at', auto_now=True)
+
+    class Meta:
+        verbose_name = 'Withdrawal Request'
+        verbose_name_plural = 'Withdrawal Requests'

@@ -8,15 +8,16 @@ User = get_user_model()
 class CreateUserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
     email = serializers.EmailField()
-    # birth_date = serializers.DateField(required=False)
+    birth_date = serializers.DateField(required=False)
+    country = serializers.CharField()
     # security_question = serializers.CharField(required=False)
     # security_answer = serializers.CharField(required=False)
 
     class Meta:
         model = User
         fields = ('username', 'password', 'confirm_password',
-                  'email', 'first_name', 'last_name',
-                  # 'birth_date', 'security_question', 'security_answer'
+                  'email', 'first_name', 'last_name', 'country',
+                  'birth_date',  # 'security_question', 'security_answer'
                   )
         extra_kwargs = {'password': {'write_only': True}}
 
