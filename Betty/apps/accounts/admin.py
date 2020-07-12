@@ -10,9 +10,8 @@ class UserAdmin(admin.UserAdmin):
     fieldsets = (
         ('Account Information', {
             'fields': (
-                'username',
-                'password',
                 'email',
+                'password',
                 'balance'
             ),
         }),
@@ -31,10 +30,10 @@ class UserAdmin(admin.UserAdmin):
     change_password_form = AdminPasswordChangeForm
 
     list_display = (
-        'username', 'email', 'first_name', 'last_name'
+        'email', 'first_name', 'last_name', 'balance'
     )
 
-    search_fields = ('email', 'first_name', 'last_name', 'username')
+    search_fields = ('email', 'first_name', 'last_name',)
 
 
 django_admin.site.register(User, UserAdmin)

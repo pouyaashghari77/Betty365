@@ -1,12 +1,9 @@
-from django.contrib.auth import login
-from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from knox.views import LoginView as KnoxLoginView
-from rest_framework import permissions, generics
-from rest_framework.authtoken.serializers import AuthTokenSerializer
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics
 from rest_framework.response import Response
 
-from .serializers import CreateUserSerializer, LoginSerializer
+from .serializers import CreateUserSerializer
 from ..accounts.serializers import UserSerializer
 
 
@@ -14,6 +11,7 @@ class RegistrationAPI(generics.GenericAPIView):
     serializer_class = CreateUserSerializer
 
     @swagger_auto_schema(
+        request_body=CreateUserSerializer,
         responses={
             201: '',
             400: 'Bad Request'
@@ -28,33 +26,33 @@ class RegistrationAPI(generics.GenericAPIView):
         })
 
 
-class LoginAPI(KnoxLoginView):
-    serializer_class = LoginSerializer
-    permission_classes = (permissions.AllowAny,)
-
-    @swagger_auto_schema(
-        request_body=LoginSerializer,
-        manual_parameters=[
-            openapi.Parameter('Authorization',
-                              openapi.IN_HEADER,
-                              description="Bearer <access_token>",
-                              type=openapi.TYPE_STRING)
-        ],
-        responses={
-            200: '',
-            400: 'Bad Request'
-        }
-    )
-    def post(self, request, format=None):
-        serializer = AuthTokenSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        login(request, user)
-
-        return super(LoginAPI, self).post(request, format=format)
+# class KnowLoginAPI(KnoxLoginView):
+#     # serializer_class = LoginSerializer
+#     permission_classes = (permissions.AllowAny,)
+#
+#     @swagger_auto_schema(
+#         # request_body=LoginSerializer,
+#         manual_parameters=[
+#             openapi.Parameter('Authorization',
+#                               openapi.IN_HEADER,
+#                               description="Bearer <access_token>",
+#                               type=openapi.TYPE_STRING)
+#         ],
+#         responses={
+#             200: '',
+#             400: 'Bad Request'
+#         }
+#     )
+#     def post(self, request, format=None):
+#         serializer = AuthTokenSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         user = serializer.validated_data['user']
+#         login(request, user)
+#
+#         return super(KnowLoginAPI, self).post(request, format=format)
 #
 #
-# class LogoutAPI(KnoxLogoutView):
+# class KnoxLogoutAPI(KnoxLogoutView):
 #     authentication_classes = [TokenAuthentication]
 #
 #     @swagger_auto_schema(
@@ -70,4 +68,4 @@ class LoginAPI(KnoxLoginView):
 #         ]
 #     )
 #     def post(self, request, format=None):
-#         return super(LogoutAPI, self).post(request, format=format)
+#         return super(KnoxLogoutAPI, self).post(request, format=format)
