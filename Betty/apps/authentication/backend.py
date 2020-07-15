@@ -11,7 +11,7 @@ class EmailAuthenticationBackend(ModelBackend):
         if email is None or password is None:
             return
         try:
-            user = User.objects.filter(email=email).first()
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
             # Run the default password hasher once to reduce the timing
             # difference between an existing and a nonexistent user (#20760).
