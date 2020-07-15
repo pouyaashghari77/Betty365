@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'knox',
+    'sslserver',
     'Betty.apps.accounts',
     'Betty.apps.authentication',
     'Betty.apps.bets',
