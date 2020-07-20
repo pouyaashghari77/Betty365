@@ -147,14 +147,26 @@ class ModifyBetAPIView(APIView):
 
 
 class UserDepositsList(APIView):
-    authentication_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, ]
 
-    def get(self, request, format=None):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('Authorization',
+                              openapi.IN_HEADER,
+                              description="Bearer <access_token>",
+                              type=openapi.TYPE_STRING)
+        ],
+        responses={
+            200: DepositSerializer(many=True),
+            401: 'Unauthorized'
+        }
+    )
+    def get(self, request, *args, **kwargs):
         deposits = Deposit.objects.filter(user=request.user)
         serializer = DepositSerializer(deposits, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def post(self, request, *args, **kwargs):
         serializer = DepositSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -204,7 +216,7 @@ class DepositDetail(APIView):
 
 
 class WithdrawalRequestAPI(APIView):
-    authentication_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, ]
 
     @swagger_auto_schema(
         manual_parameters=[

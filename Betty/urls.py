@@ -19,6 +19,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('apis/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
+    path("", include('Betty.apps.accounts.urls')),
     path("", include('Betty.apps.authentication.urls')),
     path("", include('Betty.apps.bets.urls'))
 ]
