@@ -14,6 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 # import django_heroku
+from datetime import timedelta
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -62,6 +63,7 @@ INSTALLED_APPS = [
     'Betty.apps.accounts',
     'Betty.apps.authentication',
     'Betty.apps.bets',
+    'Betty.apps.finance',
 ]
 
 CORS_REPLACE_HTTPS_REFERER = True
@@ -191,4 +193,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-# django_heroku.settings(locals())
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=10)
+}

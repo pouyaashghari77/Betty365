@@ -21,5 +21,6 @@ urlpatterns = [
 
     path("", include('Betty.apps.accounts.urls')),
     path("", include('Betty.apps.authentication.urls')),
-    path("", include('Betty.apps.bets.urls'))
+    path("", include('Betty.apps.bets.urls')),
+    path("", include('Betty.apps.finance.urls')),
 ]

@@ -1,5 +1,4 @@
 import requests
-from django.http import Http404
 from django.utils.text import slugify
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -9,13 +8,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from Betty.apps.bets.models import Bet, Event, Deposit, WithdrawalRequest
+from Betty.apps.bets.models import Bet, Event
 from Betty.apps.bets.serializers import (
     EventsRequestSerializer,
     UserBetsSerializer,
-    PlaceBetsSerializer,
-    DepositSerializer,
-    RequestWithdrawalSerializer, UserWithdrawalDetailSerializer
+    PlaceBetsSerializer
 )
 
 
@@ -144,114 +141,3 @@ class ModifyBetAPIView(APIView):
 
     def delete(self, request, *args, **kwargs):
         return
-
-
-class UserDepositsList(APIView):
-    permission_classes = [IsAuthenticated, ]
-
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter('Authorization',
-                              openapi.IN_HEADER,
-                              description="Bearer <access_token>",
-                              type=openapi.TYPE_STRING)
-        ],
-        responses={
-            200: DepositSerializer(many=True),
-            401: 'Unauthorized'
-        }
-    )
-    def get(self, request, *args, **kwargs):
-        deposits = Deposit.objects.filter(user=request.user)
-        serializer = DepositSerializer(deposits, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, *args, **kwargs):
-        serializer = DepositSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class DepositDetail(APIView):
-    permission_classes = [IsAuthenticated, ]
-
-    def get(self, request, serial_num, *args, **kwargs):
-        try:
-            deposit = Deposit.objects.get(serial_num=serial_num, user=request.user)
-        except Deposit.DoesNotExist:
-            raise Http404
-
-        if deposit.created is None:
-            serializer = DepositSerializer(deposit)
-            response_data = serializer.data
-            deposit.save()
-            return Response(response_data, status=status.HTTP_200_OK)
-
-        deposit.code = '200 EURO'
-        serializer = DepositSerializer(deposit)
-        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
-
-    def put(self, request, serial_num, *args, **kwargs):
-        try:
-            deposit = Deposit.objects.get(serial_num=serial_num)
-        except Deposit.DoesNotExist:
-            raise Http404
-
-        serializer = DepositSerializer(deposit, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, serial_num, *args, **kwargs):
-        try:
-            deposit = Deposit.objects.get(serial_num=serial_num)
-        except Deposit.DoesNotExist:
-            raise Http404
-
-        deposit.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class WithdrawalRequestAPI(APIView):
-    permission_classes = [IsAuthenticated, ]
-
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter('Authorization',
-                              openapi.IN_HEADER,
-                              description="Bearer <access_token>",
-                              type=openapi.TYPE_STRING)
-        ],
-        responses={
-            200: UserWithdrawalDetailSerializer(many=True),
-            401: 'Unauthorized'
-        }
-    )
-    def get(self, request, *args, **kwargs):
-        withdrawal_reqs = WithdrawalRequest.objects.filter(user=request.user)
-        serializer = UserWithdrawalDetailSerializer(withdrawal_reqs, many=True)
-        return Response(serializer.data)
-
-    @swagger_auto_schema(
-        request_body=RequestWithdrawalSerializer,
-        manual_parameters=[
-            openapi.Parameter('Authorization',
-                              openapi.IN_HEADER,
-                              description="Bearer <access_token>",
-                              type=openapi.TYPE_STRING)
-        ],
-        responses={
-            201: UserWithdrawalDetailSerializer,
-            400: 'Bad Request'
-        }
-    )
-    def post(self, request, *args, **kwargs):
-        serializer = RequestWithdrawalSerializer(data=request.data)
-        if serializer.is_valid():
-            withdrawal_req = serializer.save()
-            return Response(UserWithdrawalDetailSerializer(withdrawal_req).data,
-                            status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

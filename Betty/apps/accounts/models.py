@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+from django.db.models import F
 
 from Betty.apps.authentication.managers import CustomUserManager
 
@@ -25,3 +26,6 @@ class User(AbstractUser):
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    def increase_balance(self, amount):
+        User.objects.filter(pk=self.pk).update(balance=F('balance') + amount)

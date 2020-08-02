@@ -1,8 +1,6 @@
 from django.contrib import admin
-from import_export.admin import ImportMixin
-from import_export.resources import ModelResource
 
-from Betty.apps.bets.models import Bet, Event, Deposit, WithdrawalRequest
+from Betty.apps.bets.models import Bet, Event
 
 
 @admin.register(Event)
@@ -17,21 +15,3 @@ class BetAdmin(admin.ModelAdmin):
     list_display = ['event', 'selection', 'side', 'stake', 'odds', 'matched', 'has_won']
     list_filter = ['matched', 'has_won']
     list_editable = ['has_won']
-
-
-class DepositResource(ModelResource):
-    class Meta:
-        model = Deposit
-        import_id_fields = []
-        fields = ('serial_num', 'code', 'amount')
-
-
-@admin.register(Deposit)
-class DepositAdmin(ImportMixin, admin.ModelAdmin):
-    resource_class = DepositResource
-    list_display = ['serial_num', 'code', 'amount', 'created', 'updated']
-
-
-@admin.register(WithdrawalRequest)
-class WithdrawalRequestAdmin(ImportMixin, admin.ModelAdmin):
-    list_display = ['user', 'amount', 'status', 'created', 'updated']
