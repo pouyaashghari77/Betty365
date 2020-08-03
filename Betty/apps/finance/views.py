@@ -99,7 +99,7 @@ class WithdrawalRequestAPI(APIView):
         }
     )
     def post(self, request, *args, **kwargs):
-        serializer = RequestWithdrawalSerializer(data=request.data)
+        serializer = RequestWithdrawalSerializer(data=request.data, context={'user': request.user})
         if serializer.is_valid():
             withdrawal_req = serializer.save()
             return Response(UserWithdrawalDetailSerializer(withdrawal_req).data,

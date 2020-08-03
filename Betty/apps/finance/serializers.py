@@ -33,8 +33,14 @@ class DepositSerializer(serializers.ModelSerializer):
 class RequestWithdrawalSerializer(serializers.Serializer):
     amount = serializers.FloatField()
 
+    def create(self, validated_data):
+        return WithdrawalRequest.objects.create(
+            amount=validated_data['amount'],
+            user=self.context.get('user')
+        )
+
 
 class UserWithdrawalDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = WithdrawalRequest
-        fields = ['amount', 'created', 'updated']
+        fields = ['amount', 'status', 'created', 'updated']

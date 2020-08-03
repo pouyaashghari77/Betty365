@@ -8,6 +8,8 @@ from Betty.apps.finance.models import WithdrawalRequest, Deposit
 @admin.register(WithdrawalRequest)
 class WithdrawalRequestAdmin(ImportMixin, admin.ModelAdmin):
     list_display = ['user', 'amount', 'status', 'created', 'updated']
+    fields = ['user', 'amount', 'status', 'created', 'updated']
+    readonly_fields = ('created', 'updated')
 
 
 class DepositResource(ModelResource):
