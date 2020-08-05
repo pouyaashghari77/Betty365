@@ -2,6 +2,7 @@ from django.contrib import admin
 from import_export.admin import ImportMixin
 from import_export.resources import ModelResource
 
+from Betty.apps.finance.forms import WithdrawalRequestForm
 from Betty.apps.finance.models import WithdrawalRequest, Deposit
 
 
@@ -10,6 +11,7 @@ class WithdrawalRequestAdmin(ImportMixin, admin.ModelAdmin):
     list_display = ['user', 'amount', 'status', 'created', 'updated']
     fields = ['user', 'amount', 'status', 'created', 'updated']
     readonly_fields = ('created', 'updated')
+    form = WithdrawalRequestForm
 
 
 class DepositResource(ModelResource):

@@ -28,6 +28,9 @@ class WithdrawalRequest(models.Model):
         verbose_name = 'Withdrawal Request'
         verbose_name_plural = 'Withdrawal Requests'
 
+    def __str__(self):
+        return f'{self.user} - amount:{self.amount} - {self.status}'
+
 
 class Deposit(models.Model):
     PAYMENT_TYPE_PREPAID = 'Prepaid Card'
@@ -75,7 +78,7 @@ class Deposit(models.Model):
     def is_prepaid_card(self):
         return self.payment_type == self.PAYMENT_TYPE_PREPAID
 
-    def use(self, user):
+    def use_prepaid_card_code(self, user):
         if self.is_used:
             return
 

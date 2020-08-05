@@ -54,7 +54,7 @@ class MakePrepaidCardDepositAPIView(APIView):
         if serializer.is_valid():
             deposit = Deposit.objects.get(code=serializer.validated_data['code'],
                                           payment_type=Deposit.PAYMENT_TYPE_PREPAID)
-            deposit.use(request.user)
+            deposit.use_prepaid_card_code(request.user)
 
             request.user.refresh_from_db()
 

@@ -29,3 +29,6 @@ class User(AbstractUser):
 
     def increase_balance(self, amount):
         User.objects.filter(pk=self.pk).update(balance=F('balance') + amount)
+
+    def decrease_balance(self, amount):
+        User.objects.filter(pk=self.pk).update(balance=F('balance') - amount)
