@@ -12,47 +12,58 @@ from Betty.apps.bets.models import Bet, Event
 from Betty.apps.bets.serializers import (
     EventsRequestSerializer,
     UserBetsSerializer,
-    PlaceBetsSerializer
+    PlaceBetsSerializer,
+    EventsResultListSerializer
 )
+from Betty.apps.events.bwin import BWin
 
 
 class EventsListAPI(APIView):
     @swagger_auto_schema(
-        query_serializer=EventsRequestSerializer,
+        query_serializer=EventsRequestSerializer(),
+        responses={
+            200: EventsResultListSerializer(many=True)
+        }
     )
     def get(self, request, *args, **kwargs):
-        headers = {
-            'apikey': '4d532b80-9eb1-11ea-bb05-f1dead435c5f',
-        }
-        params = EventsRequestSerializer(request.query_params).data
+        qs = Event.objects.filter(
+            match_result=Event.RESULT_UPCOMING,
+        )
 
-        resp = requests.get(
-            'http://app.oddsapi.io/api/v1/odds',
-            headers=headers,
-            params=params
-        ).json()
+        if qs.count() < 10:
+            self.get_bwin_updates()
+            qs = qs.all()
 
-        for element in resp:
-            sites = element.pop('sites', None)
-            odds = list(sites['1x2'].values())[1]['odds']
-            element['event']['odds'] = odds
-            event_title = '%s - %s' % (element['event']['home'], element['event']['away'])
+        if request.GET.get('sport_name'):
+            qs = qs.filter(sport_name=request.GET.get('sport_name'))
+
+        events = EventsResultListSerializer(qs, many=True).data
+
+        return Response(data=events)
+
+    def get_bwin_updates(self):
+        bwin = BWin()
+        result = bwin.preMatchResults()
+        for element in result:
+            if not element['HomeTeam']:
+                continue
+            event_title = '%s - %s' % (element['HomeTeam'], element['AwayTeam'])
             obj, _ = Event.objects.update_or_create(
                 title=event_title,
                 slug=slugify(event_title),
                 defaults={
                     'title': event_title,
                     'slug': slugify(event_title),
-                    'home': element['event']['home'],
-                    'away': element['event']['away'],
-                    'home_odds': element['event']['odds']['1'],
-                    'away_odds': element['event']['odds']['2'],
-                    'draw_odds': element['event']['odds']['X'],
-                    'date': element['event']['start_time'],
+                    'sport_name': element['SportName'],
+                    'home': element['HomeTeam'],
+                    'away': element['AwayTeam'],
+                    'market_results': element['Markets'][0]['results'] if element['Markets'] else '',
+                    'league': element['LeagueName'],
+                    'region': element['RegionName'],
+                    'date': element['Date'],
+                    'external_id': element['Id'],
                 },
             )
-
-        return Response(data=resp)
 
 
 class UserBetsListAPIView(ListAPIView):

@@ -14,16 +14,22 @@ class Event(models.Model):
     )
     title = models.CharField('Title', max_length=64)
     slug = models.SlugField('Slug', max_length=64)
+
+    sport_name = models.CharField(max_length=64, blank=True, null=True)
+    league = models.CharField(max_length=64, blank=True, null=True)
+    region = models.CharField(max_length=64, blank=True, null=True)
+
     home = models.CharField('Home', max_length=64)
     away = models.CharField('Away', max_length=64)
-    home_odds = models.FloatField('Home Odds')
-    away_odds = models.FloatField('Away Odds')
-    draw_odds = models.FloatField('Draw Odds')
+    # home_odds = models.FloatField('Home Odds')
+    # away_odds = models.FloatField('Away Odds')
+    # draw_odds = models.FloatField('Draw Odds')
     date = models.DateTimeField('Date')
-    result = models.CharField('Result', max_length=32,
-                              choices=RESULT_CHOICES, default=RESULT_UPCOMING,
-                              blank=True, null=True)
-
+    match_result = models.CharField('Match Result', max_length=32,
+                                    choices=RESULT_CHOICES, default=RESULT_UPCOMING,
+                                    blank=True, null=True)
+    market_results = models.TextField('Market Results', default='')
+    external_id = models.CharField('External API ID', max_length=64, default='')
     created = models.DateTimeField('Created at', auto_now_add=True)
     updated = models.DateTimeField('Updated at', auto_now=True)
 

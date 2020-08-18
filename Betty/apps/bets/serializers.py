@@ -1,19 +1,24 @@
 from rest_framework import serializers
 
-from Betty.apps.bets.models import Bet
+from Betty.apps.bets.models import Bet, Event
 
 
 class EventsRequestSerializer(serializers.Serializer):
-    sport = serializers.CharField(required=False, default='')
-    country = serializers.CharField(required=False, default='')
-    league = serializers.CharField(required=False, default='')
+    sport_name = serializers.CharField(required=False, default='')
 
 
-class EventSerializer(serializers.Serializer):
+class EventsResultListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        exclude = ['external_id']
+
+
+class ShortEventSerializer(serializers.Serializer):
     title = serializers.CharField()
     home = serializers.CharField()
     away = serializers.CharField()
-    result = serializers.CharField()
+    match_result = serializers.CharField()
+    sport_name = serializers.CharField()
 
 
 class PlaceBetsSerializer(serializers.Serializer):
@@ -33,7 +38,7 @@ class PlaceBetsSerializer(serializers.Serializer):
 
 class UserBetsSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-    event = EventSerializer()
+    event = ShortEventSerializer()
     selection = serializers.CharField()
     side = serializers.CharField()
     odds = serializers.FloatField()

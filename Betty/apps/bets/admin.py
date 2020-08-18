@@ -5,9 +5,9 @@ from Betty.apps.bets.models import Bet, Event
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ['title', 'home', 'away', 'date', 'result']
-    list_filter = ['date', 'result']
-    list_editable = ['result']
+    list_display = ['title', 'home', 'away', 'date', 'sport_name', 'league', 'match_result']
+    list_filter = ['sport_name', 'date', 'match_result']
+    list_editable = ['match_result']
 
 
 @admin.register(Bet)
