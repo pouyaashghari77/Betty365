@@ -39,14 +39,24 @@ class RequestWithdrawalSerializer(serializers.Serializer):
         return value
 
     def create(self, validated_data):
-        return WithdrawalRequest.objects.create(
+        user = self.context.get('user')
+        withdrawal_request = WithdrawalRequest.objects.create(
             status=WithdrawalRequest.STATUS_APPROVED,
             amount=validated_data['amount'],
-            user=self.context.get('user')
+            user=user
         )
+        user.decrease_balance(validated_data['amount'])
+        return withdrawal_request
 
 
 class UserWithdrawalDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = WithdrawalRequest
         fields = ['amount', 'status', 'created', 'updated']
+
+    def to_representation(self, instance):
+        data = super(UserWithdrawalDetailSerializer, self).to_representation(instance)
+        user = instance.user
+        user.refresh_from_db()
+        data['balance'] = user.balance
+        return data
