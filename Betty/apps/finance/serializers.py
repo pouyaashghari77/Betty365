@@ -33,8 +33,14 @@ class DepositSerializer(serializers.ModelSerializer):
 class RequestWithdrawalSerializer(serializers.Serializer):
     amount = serializers.FloatField()
 
+    def validate_amount(self, value):
+        if value > self.context.get('user').balance:
+            raise ValidationError('Withdrawal request amount can not be more than the balance.')
+        return value
+
     def create(self, validated_data):
         return WithdrawalRequest.objects.create(
+            status=WithdrawalRequest.STATUS_APPROVED,
             amount=validated_data['amount'],
             user=self.context.get('user')
         )
