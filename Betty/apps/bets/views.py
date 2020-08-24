@@ -26,14 +26,11 @@ class EventsListAPI(APIView):
         }
     )
     def get(self, request, *args, **kwargs):
+        self.get_bwin_updates()
+
         qs = Event.objects.filter(
             match_result=Event.RESULT_UPCOMING,
         )
-
-        if qs.count() < 10:
-            self.get_bwin_updates()
-            qs = qs.all()
-
         if request.GET.get('sport_name'):
             qs = qs.filter(sport_name=request.GET.get('sport_name'))
 
