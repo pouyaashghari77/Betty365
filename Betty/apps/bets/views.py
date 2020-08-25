@@ -63,6 +63,51 @@ class EventsListAPI(APIView):
             )
 
 
+class LiveEventsListAPI(APIView):
+    @swagger_auto_schema(
+        query_serializer=EventsRequestSerializer(),
+        responses={
+            200: EventsResultListSerializer(many=True)
+        }
+    )
+    def get(self, request, *args, **kwargs):
+        self.get_bwin_updates()
+
+        qs = Event.objects.filter(
+            match_result=Event.RESULT_LIVE,
+        )
+        if request.GET.get('sport_name'):
+            qs = qs.filter(sport_name=request.GET.get('sport_name'))
+
+        events = EventsResultListSerializer(qs, many=True).data
+
+        return Response(data=events)
+
+    def get_bwin_updates(self):
+        bwin = BWin()
+        result = bwin.inplayResults()
+        for element in result:
+            if not element['HomeTeam']:
+                continue
+            event_title = '%s - %s' % (element['HomeTeam'], element['AwayTeam'])
+            obj, _ = Event.objects.update_or_create(
+                title=event_title,
+                slug=slugify(event_title),
+                defaults={
+                    'title': event_title,
+                    'slug': slugify(event_title),
+                    'sport_name': element['SportName'],
+                    'home': element['HomeTeam'],
+                    'away': element['AwayTeam'],
+                    'league': element['LeagueName'],
+                    'region': element['RegionName'],
+                    'date': element['Date'],
+                    'external_id': element['Id'],
+                    'match_result': Event.RESULT_LIVE
+                },
+            )
+
+
 class UserBetsListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = UserBetsSerializer

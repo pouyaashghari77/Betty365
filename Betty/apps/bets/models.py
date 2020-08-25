@@ -6,11 +6,13 @@ class Event(models.Model):
     RESULT_AWAY_WIN = 'Away Win'
     RESULT_DRAW = 'Draw'
     RESULT_UPCOMING = 'Upcoming'
+    RESULT_LIVE = 'Live'
     RESULT_CHOICES = (
         (RESULT_HOME_WIN, 'Home Win'),
         (RESULT_AWAY_WIN, 'Away Win'),
         (RESULT_DRAW, 'Draw'),
-        (RESULT_UPCOMING, 'Upcoming')
+        (RESULT_UPCOMING, 'Upcoming'),
+        (RESULT_LIVE, 'Live')
     )
     title = models.CharField('Title', max_length=64)
     slug = models.SlugField('Slug', max_length=64)

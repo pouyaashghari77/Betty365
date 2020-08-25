@@ -22,8 +22,8 @@ class BWin:
         response_ = requests.request("GET", url_, headers=self.headers, params=params)
         return response_.json()['results']
 
-    def inplayResults(self, sport_id: str):
+    def inplayResults(self, sport_id: str = ""):
         url_ = "https://bwin-odds.p.rapidapi.com/v1/bwin/inplay"
         params = {"sport_id": sport_id}
         response_ = requests.request("GET", url_, headers=self.headers, params=params)
-        return response_.text
+        return response_.json()['results']
