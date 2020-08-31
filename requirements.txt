@@ -1,4 +1,5 @@
 asgiref==3.2.7
+celery==4.4.7
 certifi==2020.4.5.1
 cffi==1.14.0
 chardet==3.0.4
@@ -10,6 +11,7 @@ diff-match-patch==20181111
 Django==3.0.6
 django-cors-headers==3.3.0
 django-extensions==2.2.9
+django-celery-beat==2.0.0
 dj-database-url
 django-import-export==2.2.0
 django-rest-knox==4.1.0

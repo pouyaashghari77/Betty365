@@ -2,18 +2,23 @@ from django.db import models
 
 
 class Event(models.Model):
+    RESULT_UPCOMING = 'Upcoming'
+    RESULT_LIVE = 'Live'
+    RESULT_CONCLUDED = 'Concluded'
     RESULT_HOME_WIN = 'Home Win'
     RESULT_AWAY_WIN = 'Away Win'
     RESULT_DRAW = 'Draw'
-    RESULT_UPCOMING = 'Upcoming'
-    RESULT_LIVE = 'Live'
+    RESULT_CANCELLED = 'Cancelled'
     RESULT_CHOICES = (
+        (RESULT_UPCOMING, 'Upcoming'),
+        (RESULT_LIVE, 'Live'),
+        (RESULT_CONCLUDED, 'Concluded'),
         (RESULT_HOME_WIN, 'Home Win'),
         (RESULT_AWAY_WIN, 'Away Win'),
         (RESULT_DRAW, 'Draw'),
-        (RESULT_UPCOMING, 'Upcoming'),
-        (RESULT_LIVE, 'Live')
+        (RESULT_CANCELLED, 'Cancelled'),
     )
+
     title = models.CharField('Title', max_length=64)
     slug = models.SlugField('Slug', max_length=64)
 
@@ -26,11 +31,12 @@ class Event(models.Model):
     # home_odds = models.FloatField('Home Odds')
     # away_odds = models.FloatField('Away Odds')
     # draw_odds = models.FloatField('Draw Odds')
+    scores = models.CharField('Scores', max_length=64, blank=True, null=True)
     date = models.DateTimeField('Date')
     match_result = models.CharField('Match Result', max_length=32,
                                     choices=RESULT_CHOICES, default=RESULT_UPCOMING,
                                     blank=True, null=True)
-    market_results = models.TextField('Market Results', default='')
+    market_results = models.TextField('Market Results', default='', blank=True, null=True)
     external_id = models.CharField('External API ID', max_length=64, default='')
     created = models.DateTimeField('Created at', auto_now_add=True)
     updated = models.DateTimeField('Updated at', auto_now=True)
@@ -41,6 +47,27 @@ class Event(models.Model):
 
     def __str__(self):
         return f'{self.home} - {self.away}'
+
+    def set_result(self, scores=None):
+        if scores is None:
+            return
+
+        self.scores = scores
+        scores = [s.split('-') for s in scores.split(',')]
+        scores = [[int(float(j)) for j in i] for i in scores]
+        scores = [sum(i) for i in zip(*scores)]
+        try:
+            if scores[0] > scores[1]:
+                self.match_result = self.RESULT_HOME_WIN
+            elif scores[1] > scores[0]:
+                self.match_result = self.RESULT_AWAY_WIN
+            else:
+                self.match_result = self.RESULT_DRAW
+        except IndexError:
+            pass
+
+        self.full_clean()
+        self.save()
 
 
 class Bet(models.Model):

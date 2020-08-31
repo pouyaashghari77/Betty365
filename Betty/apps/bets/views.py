@@ -1,5 +1,3 @@
-import requests
-from django.utils.text import slugify
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
@@ -10,102 +8,9 @@ from rest_framework.views import APIView
 
 from Betty.apps.bets.models import Bet, Event
 from Betty.apps.bets.serializers import (
-    EventsRequestSerializer,
     UserBetsSerializer,
-    PlaceBetsSerializer,
-    EventsResultListSerializer
+    PlaceBetsSerializer
 )
-from Betty.apps.events.bwin import BWin
-
-
-class EventsListAPI(APIView):
-    @swagger_auto_schema(
-        query_serializer=EventsRequestSerializer(),
-        responses={
-            200: EventsResultListSerializer(many=True)
-        }
-    )
-    def get(self, request, *args, **kwargs):
-        self.get_bwin_updates()
-
-        qs = Event.objects.filter(
-            match_result=Event.RESULT_UPCOMING,
-        )
-        if request.GET.get('sport_name'):
-            qs = qs.filter(sport_name=request.GET.get('sport_name'))
-
-        events = EventsResultListSerializer(qs, many=True).data
-
-        return Response(data=events)
-
-    def get_bwin_updates(self):
-        bwin = BWin()
-        result = bwin.preMatchResults()
-        for element in result:
-            if not element['HomeTeam']:
-                continue
-            event_title = '%s - %s' % (element['HomeTeam'], element['AwayTeam'])
-            obj, _ = Event.objects.update_or_create(
-                title=event_title,
-                slug=slugify(event_title),
-                defaults={
-                    'title': event_title,
-                    'slug': slugify(event_title),
-                    'sport_name': element['SportName'],
-                    'home': element['HomeTeam'],
-                    'away': element['AwayTeam'],
-                    'market_results': element['Markets'][0]['results'] if element['Markets'] else '',
-                    'league': element['LeagueName'],
-                    'region': element['RegionName'],
-                    'date': element['Date'],
-                    'external_id': element['Id'],
-                },
-            )
-
-
-class LiveEventsListAPI(APIView):
-    @swagger_auto_schema(
-        query_serializer=EventsRequestSerializer(),
-        responses={
-            200: EventsResultListSerializer(many=True)
-        }
-    )
-    def get(self, request, *args, **kwargs):
-        self.get_bwin_updates()
-
-        qs = Event.objects.filter(
-            match_result=Event.RESULT_LIVE,
-        )
-        if request.GET.get('sport_name'):
-            qs = qs.filter(sport_name=request.GET.get('sport_name'))
-
-        events = EventsResultListSerializer(qs, many=True).data
-
-        return Response(data=events)
-
-    def get_bwin_updates(self):
-        bwin = BWin()
-        result = bwin.inplayResults()
-        for element in result:
-            if not element['HomeTeam']:
-                continue
-            event_title = '%s - %s' % (element['HomeTeam'], element['AwayTeam'])
-            obj, _ = Event.objects.update_or_create(
-                title=event_title,
-                slug=slugify(event_title),
-                defaults={
-                    'title': event_title,
-                    'slug': slugify(event_title),
-                    'sport_name': element['SportName'],
-                    'home': element['HomeTeam'],
-                    'away': element['AwayTeam'],
-                    'league': element['LeagueName'],
-                    'region': element['RegionName'],
-                    'date': element['Date'],
-                    'external_id': element['Id'],
-                    'match_result': Event.RESULT_LIVE
-                },
-            )
 
 
 class UserBetsListAPIView(ListAPIView):

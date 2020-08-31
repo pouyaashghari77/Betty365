@@ -1,0 +1,28 @@
+{
+  "success": 1,
+  "results": [
+    {
+      "matching_dir": "1",
+      "bwin_id": "10427977",
+      "id": "2681829",
+      "time_status": "3",
+      "time": "1598879100",
+      "ss": "5-0",
+      "sport_id": "15",
+      "away": {
+        "name": "Conan Whitehead",
+        "image_id": "51566",
+        "id": "72667"
+      },
+      "home": {
+        "name": "Mike De Decker",
+        "image_id": "173482",
+        "id": "52274"
+      },
+      "league": {
+        "name": "PDC Home Tour 2 2020",
+        "id": "23963"
+      }
+    }
+  ]
+}

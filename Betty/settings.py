@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'knox',
+    'django_celery_beat',
     'sslserver',
     'Betty.apps.accounts',
     'Betty.apps.authentication',
@@ -198,3 +199,22 @@ SIMPLE_JWT = {
 }
 
 RAPIDAPI_BWIN_API_KEY = "d3b89e723amsh1659a2a93ef67c4p1a9d9ajsn47f31b23834c"
+
+# =====================================================================
+# ************************* Celery Settings ***************************
+# =====================================================================
+# RABBITMQ_URL = get_env_var('RABBITMQ_URL', 'amqp://guest:guest@localhost//')
+CELERY_ALWAYS_EAGER = True
+CELERY_DEFAULT_QUEUE = 'default'
+CELERY_DEFAULT_EXCHANGE_TYPE = 'direct'
+CELERY_DEFAULT_ROUTING_KEY = 'default'
+# CELERY_QUEUES = (Queue('default', Exchange('snapproom', type='topic'), routing_key='default'))
+# CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Tashkent'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERYBEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_IMPORTS = ('Betty.apps.events.tasks',)
