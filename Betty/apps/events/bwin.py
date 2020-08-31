@@ -80,6 +80,7 @@ class BWin:
                 'away': element['AwayTeam'],
                 'league': element['LeagueName'],
                 'region': element['RegionName'],
+                'market_results': element['Markets'][0]['results'] if element['Markets'] else '',
                 'date': element['Date'],
                 'external_id': element['Id'],
                 'match_result': match_result
