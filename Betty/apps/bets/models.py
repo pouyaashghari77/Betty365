@@ -53,6 +53,7 @@ class Event(models.Model):
             return
 
         self.scores = scores
+        self.save()  # FIXME remove this, it's for bugfix investigations!!!
         scores = [s.split('-') for s in scores.split(',')]
         scores = [[int(float(j)) for j in i] for i in scores]
         scores = [sum(i) for i in zip(*scores)]
