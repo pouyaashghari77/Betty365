@@ -5,6 +5,8 @@ from Betty.apps.bets.models import Event
 
 class EventsRequestSerializer(serializers.Serializer):
     sport_name = serializers.CharField(required=False, default='')
+    league = serializers.CharField(required=False, default='')
+    live = serializers.BooleanField(required=False, default=False)
 
 
 class EventsResultListSerializer(serializers.ModelSerializer):
