@@ -17,12 +17,17 @@ class BWin:
             'Live Events': 'https://bwin-odds.p.rapidapi.com/v1/bwin/inplay',
             'Event Result': 'https://bwin-odds.p.rapidapi.com/v1/bwin/result'
         }
+        self.supported_sports = {
+            'Football': 4,
+            'Basketball': 7,
+            'Tennis': 5
+        }
 
-    def preMatchResults(self, event_id: str = ""):
-        params = {"event_id": event_id}
+    def preMatchResults(self, sport_id: int = None):
+        params = {"sport_id": sport_id}
         return self._get_bwin_response(params, url=self.urls['Upcoming Events'])
 
-    def inplayResults(self, sport_id: str = ""):
+    def inplayResults(self, sport_id: int = None):
         params = {"sport_id": sport_id}
         return self._get_bwin_response(params, url=self.urls['Live Events'])
 
@@ -35,7 +40,8 @@ class BWin:
         return response_.json()['results']
 
     def updateUpcomingEvents(self):
-        result = self.preMatchResults()
+        result = [self.preMatchResults(sport_id) for sport_id in self.supported_sports.values()]
+        result = [item for sublist in result for item in sublist]
         for element in result:
             if not element['HomeTeam']:
                 continue
@@ -44,7 +50,8 @@ class BWin:
     def updateLiveEvents(self):
         self._concludeLiveEvents()
 
-        result = self.inplayResults()
+        result = [self.inplayResults(sport_id) for sport_id in self.supported_sports.values()]
+        result = [item for sublist in result for item in sublist]
         for element in result:
             if not element['HomeTeam']:
                 continue
