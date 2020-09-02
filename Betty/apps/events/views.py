@@ -19,7 +19,7 @@ class EventsListAPI(ListAPIView):
         return Response(data=events)
 
     def get_qs(self, request):
-        live = request.GET.get('live')
+        live = request.GET.get('live') == 'true'
         qs = Event.objects.filter(
             match_result=Event.RESULT_LIVE if live else Event.RESULT_UPCOMING,
         )
