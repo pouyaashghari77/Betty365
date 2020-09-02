@@ -76,10 +76,7 @@ class BWin:
 
     def _updateOrCreateEvent(self, element, match_result=Event.RESULT_UPCOMING):
         event_title = '%s - %s' % (element['HomeTeam'], element['AwayTeam'])
-        obj, _ = Event.objects.update_or_create(
-            title=event_title,
-            slug=slugify(event_title),
-            defaults={
+        defaults = {
                 'title': event_title,
                 'slug': slugify(event_title),
                 'sport_name': element['SportName'],
@@ -91,5 +88,11 @@ class BWin:
                 'date': element['Date'],
                 'external_id': element['Id'],
                 'match_result': match_result
-            },
+            }
+        if match_result == Event.RESULT_LIVE:
+            del defaults['market_results']
+        obj, _ = Event.objects.update_or_create(
+            title=event_title,
+            slug=slugify(event_title),
+            defaults=defaults,
         )
