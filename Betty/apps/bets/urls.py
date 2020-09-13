@@ -6,7 +6,7 @@ from Betty.apps.bets.views import (
 )
 
 urlpatterns = [
-    path("events/<slug:slug>/bets/", EventBetsAPIView.as_view()),
-    path("events/<slug:slug>/bets/<int:id>/", ModifyBetAPIView.as_view()),
+    path("events/<slug:event_slug>/bets/", EventBetsAPIView.as_view()),
+    path("events/<slug:event_slug>/bets/<int:id>/", ModifyBetAPIView.as_view()),
     path("users/self/bets/", UserBetsListAPIView.as_view()),
 ]

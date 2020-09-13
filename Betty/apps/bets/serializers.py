@@ -5,8 +5,18 @@ from Betty.apps.events.serializers import ShortEventSerializer
 
 
 class PlaceBetsSerializer(serializers.Serializer):
-    selection = serializers.CharField()
-    side = serializers.CharField()
+    SIDE_CHOICES = (
+        ('Back', 'Back'),
+        ('Lay', 'Lay'),
+    )
+
+    SELECTION_CHOICES = (
+        ('Home', 'Home'),
+        ('Away', 'Away')
+    )
+
+    selection = serializers.ChoiceField(choices=SELECTION_CHOICES)
+    side = serializers.ChoiceField(choices=SIDE_CHOICES)
     odds = serializers.FloatField()
     stake = serializers.FloatField()
 

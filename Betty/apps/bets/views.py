@@ -54,11 +54,11 @@ class EventBetsAPIView(APIView):
             401: 'Unauthorized'
         }
     )
-    def post(self, request, *args, **kwargs):
+    def post(self, request, event_slug, *args, **kwargs):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        event = Event.objects.filter(slug=1).first()
+        event = Event.objects.filter(slug=event_slug).last()
         if event is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
 

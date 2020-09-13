@@ -93,11 +93,18 @@ class Bet(models.Model):
         (SIDE_BACK, 'Back'),
         (SIDE_LAY, 'Lay'),
     )
+
+    SELECTION_CHOICE_HOME = 'Home'
+    SELECTION_CHOICE_AWAY = 'Away'
+    SELECTION_CHOICES = (
+        (SELECTION_CHOICE_HOME, 'Home'),
+        (SELECTION_CHOICE_HOME, 'Away')
+    )
     event = models.ForeignKey('Event', models.CASCADE, verbose_name='Event')
     user = models.ForeignKey('accounts.User', on_delete=models.CASCADE,
                              related_name='bets', verbose_name='User')
-    selection = models.CharField('Selection', max_length=64)
-    side = models.CharField('Side', max_length=4)
+    selection = models.CharField('Selection', max_length=4, choices=SELECTION_CHOICES)
+    side = models.CharField('Side', max_length=4, choices=SIDE_CHOICES)
     odds = models.FloatField('Odds')
     stake = models.FloatField('Stake')
     matched = models.BooleanField('Matched', default=False)
