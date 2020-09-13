@@ -87,7 +87,8 @@ class BWin:
                 'market_results': element['Markets'][0]['results'] if element.get('Markets') else '',
                 'date': element['Date'],
                 'external_id': element['Id'],
-                'match_result': match_result
+                'match_result': match_result,
+                'scoreboard': element.get('Scoreboard', '')
             }
         if match_result == Event.RESULT_LIVE:
             del defaults['market_results']

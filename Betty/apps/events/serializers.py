@@ -10,9 +10,12 @@ class EventsRequestSerializer(serializers.Serializer):
 
 
 class EventsResultListSerializer(serializers.ModelSerializer):
+    period = serializers.ReadOnlyField(required=False, default='')
+    live_score = serializers.ReadOnlyField(required=False, default='')
+
     class Meta:
         model = Event
-        exclude = ['external_id']
+        exclude = ['external_id', 'scoreboard']
 
 
 class ShortEventSerializer(serializers.Serializer):

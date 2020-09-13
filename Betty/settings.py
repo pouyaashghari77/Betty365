@@ -198,7 +198,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=10)
 }
 
-RAPIDAPI_BWIN_API_KEY = "d3b89e723amsh1659a2a93ef67c4p1a9d9ajsn47f31b23834c"
+RAPIDAPI_BWIN_API_KEY = "6c17df0a95msh09d8990315c3738p1d3f6ejsn03a76af51b79"
 
 # =====================================================================
 # ************************* Celery Settings ***************************

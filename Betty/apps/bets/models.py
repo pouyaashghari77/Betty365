@@ -1,3 +1,5 @@
+import ast
+
 from django.db import models
 
 
@@ -37,6 +39,7 @@ class Event(models.Model):
                                     choices=RESULT_CHOICES, default=RESULT_UPCOMING,
                                     blank=True, null=True)
     market_results = models.TextField('Market Results', default='', blank=True, null=True)
+    scoreboard = models.TextField('Scoreboard', default='', blank=True, null=True)
     external_id = models.CharField('External API ID', max_length=64, default='')
     created = models.DateTimeField('Created at', auto_now_add=True)
     updated = models.DateTimeField('Updated at', auto_now=True)
@@ -44,6 +47,18 @@ class Event(models.Model):
     class Meta:
         verbose_name = 'Event'
         verbose_name_plural = 'Events'
+
+    @property
+    def period(self):
+        if self.scoreboard and self.scoreboard != '':
+            return ast.literal_eval(self.scoreboard).get('period', '')
+        return ''
+
+    @property
+    def live_score(self):
+        if self.scoreboard and self.scoreboard != '':
+            return ast.literal_eval(self.scoreboard).get('score', '')
+        return ''
 
     def __str__(self):
         return f'{self.home} - {self.away}'
