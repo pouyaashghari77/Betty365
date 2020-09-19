@@ -12,6 +12,7 @@ class EventsRequestSerializer(serializers.Serializer):
 class EventsResultListSerializer(serializers.ModelSerializer):
     period = serializers.ReadOnlyField(required=False, default='')
     live_score = serializers.ReadOnlyField(required=False, default='')
+    timer = serializers.ReadOnlyField(required=False, default={})
 
     class Meta:
         model = Event

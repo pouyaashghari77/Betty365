@@ -60,6 +60,12 @@ class Event(models.Model):
             return ast.literal_eval(self.scoreboard).get('score', '')
         return ''
 
+    @property
+    def timer(self):
+        if self.scoreboard and self.scoreboard != '':
+            return ast.literal_eval(self.scoreboard).get('timer', {})
+        return {}
+
     def __str__(self):
         return f'{self.home} - {self.away}'
 
