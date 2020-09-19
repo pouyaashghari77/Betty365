@@ -19,6 +19,7 @@ class EventsResultListSerializer(serializers.ModelSerializer):
 
 
 class ShortEventSerializer(serializers.Serializer):
+    slug = serializers.SlugField()
     title = serializers.CharField()
     home = serializers.CharField()
     away = serializers.CharField()

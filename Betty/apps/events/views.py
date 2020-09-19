@@ -1,3 +1,4 @@
+from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -16,7 +17,8 @@ class EventsListAPI(ListAPIView):
     def get(self, request, *args, **kwargs):
         qs = self.get_qs(request)
         events = EventsResultListSerializer(qs, many=True).data
-        return Response(data=events)
+        now = timezone.localtime(timezone.now())
+        return Response(data=events, headers={'x-server-time': now})
 
     def get_qs(self, request):
         live = request.GET.get('live') == 'true'

@@ -83,8 +83,8 @@ class EventBetsAPIView(APIView):
             401: 'Unauthorized'
         }
     )
-    def get(self, request, *args, **kwargs):
-        event = Event.objects.filter(slug=1).first()
+    def get(self, request, event_slug, *args, **kwargs):
+        event = Event.objects.filter(slug=event_slug).last()
         if event is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -94,8 +94,5 @@ class EventBetsAPIView(APIView):
 
 
 class ModifyBetAPIView(APIView):
-    def patch(self, request, *args, **kwargs):
-        return
-
     def delete(self, request, *args, **kwargs):
         return
