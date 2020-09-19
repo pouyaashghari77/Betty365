@@ -94,5 +94,24 @@ class EventBetsAPIView(APIView):
 
 
 class ModifyBetAPIView(APIView):
-    def delete(self, request, *args, **kwargs):
-        return
+    permission_classes = [IsAuthenticated, ]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('Authorization',
+                              openapi.IN_HEADER,
+                              description="Bearer <access_token>",
+                              type=openapi.TYPE_STRING)
+        ],
+        responses={
+            204: 'No Content',
+            404: 'Not Found'
+        }
+    )
+    def delete(self, request, bet_id, *args, **kwargs):
+        bet = Bet.objects.filter(id=bet_id, user=request.user).last()
+        if bet is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        bet.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
