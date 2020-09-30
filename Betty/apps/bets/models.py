@@ -1,6 +1,7 @@
 import ast
 
 from django.db import models
+from rest_framework.exceptions import ValidationError
 
 
 class Event(models.Model):
@@ -128,3 +129,12 @@ class Bet(models.Model):
     @property
     def returning(self):
         return self.odds * self.stake
+
+    @classmethod
+    def place_bet(cls, event, user, data):
+        stake = data.get('stake')
+        if user.balance < stake:
+            raise ValidationError({'stake': 'Insufficient balance.'})
+        bet = Bet.objects.create(event=event, user=user, **data)
+        user.decrease_balance(bet.stake)
+        return bet

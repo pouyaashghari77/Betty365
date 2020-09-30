@@ -23,11 +23,7 @@ class PlaceBetsSerializer(serializers.Serializer):
     def create(self, validated_data):
         event = self.context.get('event')
         user = self.context.get('user')
-        return Bet.objects.create(
-            event=event, user=user,
-            **validated_data
-        )
-
+        return Bet.place_bet(event, user, validated_data)
 
 class UserBetsSerializer(serializers.Serializer):
     id = serializers.IntegerField()
